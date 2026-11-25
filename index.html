@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>E-Absen RAME · Scanner V10</title>
+<title>E-Absen RAME · Scanner V11</title>
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
 <style>
 :root{color-scheme:dark;font-family:system-ui,-apple-system,'Segoe UI',sans-serif}
@@ -37,20 +37,20 @@ body{padding:0;background:#080b0d}main{max-width:none;min-height:100vh;min-heigh
 </head>
 <body>
 <main>
- <div class="top"><div><h1>Scan QR Siswa <small style="font-size:10px;color:#aab5c2;font-weight:500">V10</small></h1><p class="sub">V10</p></div><span class="badge" id="badge">Belum aktif</span></div>
+ <div class="top"><div><h1>Scan QR Siswa <small style="font-size:10px;color:#aab5c2;font-weight:500">V11</small></h1><p class="sub">V11</p></div><span class="badge" id="badge">Belum aktif</span></div>
  <div class="controls"><button class="primary" id="startBtn" type="button">▶ Mulai kamera</button><button class="secondary" id="stopBtn" type="button" disabled>■ Stop</button><button class="secondary iconBtn" id="flipBtn" type="button" aria-label="Balik arah tampilan kamera" aria-pressed="false" title="Balik arah tampilan kamera">↔</button><button class="secondary iconBtn" id="fullBtn" type="button" aria-label="Layar penuh" title="Layar penuh">⛶</button><button class="secondary iconBtn" id="settingsBtn" type="button" aria-label="Pengaturan" title="Pengaturan">⚙</button></div>
  <div class="camera"><video id="video" autoplay muted playsinline hidden></video><div class="reticle" id="reticle" hidden></div><div id="hint">Tekan <b>Mulai kamera</b></div><div id="notice" class="notice" role="status" aria-live="polite" hidden><div><div id="noticeSymbol" class="symbol"></div><div id="noticeEyebrow" class="eyebrow"></div><strong id="noticeTitle"></strong><p id="noticeName"></p><p id="noticeDetail"></p><div class="progress" aria-hidden="true"><span></span></div><div class="next">Kamera siap kembali dalam 3 detik</div></div></div></div>
  <canvas id="work"></canvas>
  <div class="summary"><div><div id="resultTitle" class="status">Siap scan</div><div id="resultInfo" class="detail"></div></div><div>Hadir: <span id="count">0</span></div></div>
- <div id="settings" class="settings" hidden><div class="settingsBox"><div class="settingsHead"><h2>Pengaturan scanner · V10</h2><button id="closeSettings" class="secondary" type="button" aria-label="Tutup pengaturan">✕</button></div>
+ <div id="settings" class="settings" hidden><div class="settingsBox"><div class="settingsHead"><h2>Pengaturan scanner · V11</h2><button id="closeSettings" class="secondary" type="button" aria-label="Tutup pengaturan">✕</button></div>
  <label for="cameraSelect">Kamera</label><select id="cameraSelect"><option value="environment">Kamera belakang</option><option value="user">Kamera depan</option></select>
  <label for="previewMode">Arah tampilan kamera</label><select id="previewMode"><option value="auto">Otomatis (depan seperti cermin, belakang normal)</option><option value="normal">Normal (teks kartu terbaca normal)</option><option value="flipped">Dibalik kiri-kanan (seperti cermin)</option></select>
  <p class="help" id="previewInfo" aria-live="polite"></p>
  <label for="soundMode">Suara nama siswa</label><select id="soundMode"><option value="female">Perempuan (Cewek)</option><option value="male">Laki-laki (Cowok)</option><option value="silent">Senyap</option></select>
- <p class="help" id="voiceInfo">Menggunakan suara asli perangkat tanpa efek perubahan nada.</p>
- <label for="nativeVoice">Suara asli perangkat (opsional)</label><select id="nativeVoice"><option value="">Otomatis sesuai pilihan</option></select>
+ <p class="help" id="voiceInfo" role="status" aria-live="polite">Mendeteksi suara Indonesia pada perangkat.</p>
+ <label for="nativeVoice">Pilih suara Indonesia asli (opsional)</label><select id="nativeVoice"><option value="">Otomatis sesuai pilihan</option></select><p class="help">Jika nama suara tidak menunjukkan jenis kelamin, pilih dan tes sendiri. Mode laki-laki tidak otomatis memakai suara perempuan. Di Windows, coba pasang suara Indonesia Microsoft Andika.</p><button type="button" class="secondary" id="reloadVoices">Muat ulang daftar suara</button>
  <label for="volume">Volume</label><input id="volume" type="range" min="0" max="100" value="80" style="width:100%">
- <button type="button" class="secondary" id="testNotice" style="margin-top:10px">Tes suara & animasi</button>
+ <button type="button" class="secondary" id="testNotice" style="margin-top:10px">Tes suara & animasi: Kamal Ganteng</button>
  <div class="panel"><h2>Alternatif scan</h2><form id="manual" class="manual"><input id="manualCode" type="text" autocomplete="off" placeholder="Kode QR / USB"><button type="submit" class="primary">Kirim</button></form><label class="filebtn">Foto QR / galeri<input id="photo" type="file" accept="image/*" capture="environment" hidden></label><p class="help" id="connectionHint"></p></div></div></div>
 </main>
 <script>
@@ -83,7 +83,8 @@ function announce(type,title,name,detail){
 }
 const soundMode=document.getElementById('soundMode'), volume=document.getElementById('volume');
 const nativeVoice=document.getElementById('nativeVoice');
-const prefsKey='rame-scanner-v10';let prefs={};try{prefs=JSON.parse(localStorage.getItem(prefsKey)||localStorage.getItem('rame-scanner-v9')||localStorage.getItem('rame-scanner-v8')||localStorage.getItem('rame-scanner-v7')||'{}')||{}}catch(e){}
+const prefsKey='rame-scanner-v11';let prefs={};try{prefs=JSON.parse(localStorage.getItem(prefsKey)||localStorage.getItem('rame-scanner-v10')||localStorage.getItem('rame-scanner-v9')||localStorage.getItem('rame-scanner-v8')||localStorage.getItem('rame-scanner-v7')||'{}')||{}}catch(e){}
+const voiceByMode={female:'',male:'',...(prefs.voiceByMode||{})};
 if([...soundMode.options].some(o=>o.value===prefs.mode))soundMode.value=prefs.mode;
 if(Number.isFinite(prefs.volume))volume.value=prefs.volume;
 const previewMode=document.getElementById('previewMode');
@@ -93,7 +94,7 @@ for(const facing of ['environment','user']){
  const saved=prefs.previewByCamera?.[facing];
  if(['auto','normal','flipped'].includes(saved))previewByCamera[facing]=saved;
 }
-function savePrefs(){try{localStorage.setItem(prefsKey,JSON.stringify({mode:soundMode.value,volume:Number(volume.value),voiceURI:nativeVoice.value||prefs.voiceURI||'',previewByCamera}))}catch(e){}}
+function savePrefs(){try{localStorage.setItem(prefsKey,JSON.stringify({mode:soundMode.value,volume:Number(volume.value),voiceByMode,previewByCamera}))}catch(e){}}
 function currentFacing(){
  const actual=stream?.getVideoTracks()[0]?.getSettings?.().facingMode;
  return actual==='user'||actual==='environment'?actual:(select.value==='user'?'user':'environment');
@@ -110,40 +111,58 @@ function applyPreview(){
 }
 previewMode.addEventListener('change',()=>{previewByCamera[currentFacing()]=previewMode.value;applyPreview();savePrefs()});
 flipBtn.addEventListener('click',()=>{const facing=currentFacing();previewByCamera[facing]=shouldFlip(facing,previewByCamera[facing])?'normal':'flipped';applyPreview();savePrefs()});
+// Browser tidak menyediakan atribut gender; gunakan nama voice yang dikenal,
+// atau pilihan manual yang telah diuji pengguna. Jangan menebak suara pria.
 function unlockAudio(){if('speechSynthesis' in window)speechSynthesis.getVoices();}
 function indonesianVoices(){return 'speechSynthesis' in window?speechSynthesis.getVoices().filter(v=>/^id(?:[-_]|$)/i.test(v.lang)):[];}
+function voiceGender(v){
+ const n=v.name+' '+v.voiceURI;
+ if(/\b(female|gadis|wanita|perempuan|dewi|gadisneural)\b/i.test(n))return 'female';
+ if(/\b(male|andika|ardi|pria|laki-laki|ardineural|andikaneural)\b/i.test(n))return 'male';
+ return 'unknown';
+}
+function allowedVoices(mode){return indonesianVoices().filter(v=>voiceGender(v)===mode||voiceGender(v)==='unknown');}
 function refreshVoices(){
- const previous=nativeVoice.value||prefs.voiceURI||'';
+ const mode=soundMode.value, previous=voiceByMode[mode]||'';
  nativeVoice.replaceChildren(new Option('Otomatis sesuai pilihan',''));
- for(const v of indonesianVoices())nativeVoice.add(new Option(v.name,v.voiceURI));
- if([...nativeVoice.options].some(o=>o.value===previous))nativeVoice.value=previous;
+ for(const v of allowedVoices(mode)){
+  const kind=voiceGender(v);
+  nativeVoice.add(new Option(v.name+' ('+(kind==='male'?'pria':kind==='female'?'wanita':'jenis belum diketahui — tes dulu')+')',v.voiceURI));
+ }
+ nativeVoice.value=[...nativeVoice.options].some(o=>o.value===previous)?previous:'';
  updateVoiceInfo();
 }
 function chooseVoice(){
- const voices=indonesianVoices();
+ const mode=soundMode.value, voices=allowedVoices(mode);
+ if(mode==='silent')return {};
  const explicit=voices.find(v=>v.voiceURI===nativeVoice.value);
- if(explicit)return {voice:explicit,matched:true,manual:true};
- const pattern=soundMode.value==='male'?/\b(male|andika|ardi|pria|laki-laki|guy)\b/i:/\b(female|gadis|wanita|perempuan|dewi)\b/i;
- const match=voices.find(v=>pattern.test(v.name));
- return {voice:match||voices[0],matched:!!match};
+ if(explicit)return {voice:explicit,manual:true,matched:voiceGender(explicit)===mode};
+ const match=voices.find(v=>voiceGender(v)===mode);
+ if(match)return {voice:match,matched:true};
+ // Pertahankan suara bawaan Indonesia di mode wanita saja, dengan label jujur.
+ if(mode==='female')return {voice:voices[0],matched:false};
+ return {};
 }
 function updateVoiceInfo(){
  const info=document.getElementById('voiceInfo');nativeVoice.disabled=soundMode.value==='silent';
  if(soundMode.value==='silent'){info.textContent='Notifikasi suara dinonaktifkan.';return;}
  if(!('speechSynthesis' in window)){info.textContent='Browser ini tidak mendukung pembaca suara.';return;}
  const v=chooseVoice();
- info.textContent=v.matched?'Suara asli: '+v.voice.name:v.voice?'Suara '+(soundMode.value==='male'?'pria':'wanita')+' belum teridentifikasi. Menggunakan '+v.voice.name+' dengan nada asli. Pilih suara perangkat untuk mencoba.':'Belum ada suara Indonesia terdeteksi. Browser menggunakan suara bawaan jika tersedia.';
+ if(v.voice){info.textContent='Suara aktif: '+v.voice.name+(v.matched?' (teridentifikasi dari nama suara).':' (jenis belum terverifikasi; silakan tes).');return;}
+ info.textContent=soundMode.value==='male'?'Suara laki-laki Indonesia belum terdeteksi. Pilih suara pria asli yang tersedia, atau pasang Microsoft Andika di Windows. Tidak akan diganti dengan suara perempuan.':'Suara Indonesia belum terdeteksi. Pasang suara Indonesia pada perangkat atau pilih browser yang mendukungnya.';
 }
 function playSound(type,title,name){
  if(!('speechSynthesis' in window))return;speechSynthesis.cancel();
  if(soundMode.value==='silent'||Number(volume.value)===0)return;
- try{const u=new SpeechSynthesisUtterance(type==='success'?(name||'Hadir'):type==='warn'?(name||'Sudah tercatat'):'QR ditolak');u.lang='id-ID';u.volume=Number(volume.value)/100;const v=chooseVoice();if(v.voice)u.voice=v.voice;u.pitch=1;u.rate=1;speechSynthesis.speak(u);}catch(e){}
+ const v=chooseVoice();if(!v.voice){updateVoiceInfo();return;}
+ try{const u=new SpeechSynthesisUtterance(type==='success'?(name||'Hadir'):type==='warn'?(name||'Sudah tercatat'):'QR ditolak');u.lang=v.voice.lang;u.voice=v.voice;u.volume=Number(volume.value)/100;u.pitch=1;u.rate=1;u.onerror=()=>{document.getElementById('voiceInfo').textContent='Suara '+v.voice.name+' gagal diputar. Coba tes atau pilih suara lain.';};speechSynthesis.speak(u);}catch(e){document.getElementById('voiceInfo').textContent='Gagal memutar suara. Coba pilih suara lain.';}
 }
-soundMode.addEventListener('change',()=>{nativeVoice.value='';prefs.voiceURI='';savePrefs();updateVoiceInfo()});
-nativeVoice.addEventListener('change',()=>{prefs.voiceURI=nativeVoice.value;savePrefs();updateVoiceInfo()});
+soundMode.addEventListener('change',()=>{refreshVoices();savePrefs()});
+nativeVoice.addEventListener('change',()=>{voiceByMode[soundMode.value]=nativeVoice.value;savePrefs();updateVoiceInfo()});
 volume.addEventListener('input',savePrefs);
+document.getElementById('reloadVoices').onclick=()=>{unlockAudio();refreshVoices()};
 if('speechSynthesis' in window)speechSynthesis.addEventListener('voiceschanged',refreshVoices);refreshVoices();
-const settings=document.getElementById('settings');document.getElementById('settingsBtn').onclick=()=>{unlockAudio();settings.hidden=false};document.getElementById('closeSettings').onclick=()=>{settings.hidden=true};
+const settings=document.getElementById('settings');document.getElementById('settingsBtn').onclick=()=>{unlockAudio();refreshVoices();settings.hidden=false};document.getElementById('closeSettings').onclick=()=>{settings.hidden=true};
 const fullBtn=document.getElementById('fullBtn');function syncFull(){const active=!!document.fullscreenElement||document.body.classList.contains('immersive');fullBtn.textContent=active?'↙':'⛶';fullBtn.title=active?'Keluar layar penuh':'Layar penuh';fullBtn.setAttribute('aria-label',fullBtn.title)}
 fullBtn.onclick=async()=>{if(document.fullscreenElement){await document.exitFullscreen();}else if(document.body.classList.contains('immersive')){document.body.classList.remove('immersive')}else{try{if(!document.documentElement.requestFullscreen)throw Error();await document.documentElement.requestFullscreen()}catch(e){document.body.classList.add('immersive')}}syncFull()};document.addEventListener('fullscreenchange',syncFull);
 let cooldown = new Map();
@@ -257,7 +276,7 @@ window.addEventListener('message',event=>{
    select.value=d.camera;startCamera();
  }
 });
-document.getElementById('testNotice').addEventListener('click',()=>{if(awaiting.size)return;unlockAudio();settings.hidden=true;announce('success','Simulasi hadir','Ahmad Fauzi','Tes tampilan saja. Tidak disimpan ke Google Sheets.');document.getElementById('noticeEyebrow').textContent='SIMULASI NOTIFIKASI';});
+document.getElementById('testNotice').addEventListener('click',()=>{if(awaiting.size)return;unlockAudio();refreshVoices();if(soundMode.value==='male'&&!chooseVoice().voice){updateVoiceInfo();return;}settings.hidden=true;announce('success','Simulasi hadir','Kamal Ganteng','Tes tampilan saja. Tidak disimpan ke Google Sheets.');document.getElementById('noticeEyebrow').textContent='SIMULASI NOTIFIKASI';});
 document.getElementById('startBtn').addEventListener('click',startCamera);
 document.getElementById('stopBtn').addEventListener('click',stopCamera);
 select.addEventListener('change',()=>{if(running)startCamera();else applyPreview();});
